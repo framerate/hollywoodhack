@@ -8,14 +8,15 @@ module.exports = class HomeView extends View
   initialize: ->
     if localStorage.accessToken
         graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=displayUser";
-        alert(graphUrl);
+        # alert(graphUrl);
     
         script = document.createElement("script");
         script.src = graphUrl;
         document.body.appendChild(script);
     
-        displayUser (user) ->
-            alert(user);
+        window.displayUser = (user) ->
+          # $('body').append("TEST "+user)
+          console.log user
     else 
-      alert("no localStorage.accessToken found")
+      console.log("no localStorage.accessToken found")
 

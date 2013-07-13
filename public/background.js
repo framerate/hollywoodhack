@@ -1,5 +1,6 @@
 var successURL = 'https://www.facebook.com/connect/login_success.html';
 localStorage.removeItem('accessToken');
+
 function onFacebookLogin() {
     if (!localStorage.accessToken) {
         chrome.tabs.getAllInWindow(null, function(tabs) {
@@ -14,7 +15,6 @@ function onFacebookLogin() {
                 }
             }
         });
-    } else {
-    }
+    } else {}
 }
 chrome.tabs.onUpdated.addListener(onFacebookLogin);

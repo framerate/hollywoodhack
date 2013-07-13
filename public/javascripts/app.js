@@ -207,15 +207,14 @@ window.require.register("views/home_view", function(exports, require, module) {
       var graphUrl, script;
       if (localStorage.accessToken) {
         graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=displayUser";
-        alert(graphUrl);
         script = document.createElement("script");
         script.src = graphUrl;
         document.body.appendChild(script);
-        return displayUser(function(user) {
-          return alert(user);
-        });
+        return window.displayUser = function(user) {
+          return console.log(user);
+        };
       } else {
-        return alert("no localStorage.accessToken found");
+        return console.log("no localStorage.accessToken found");
       }
     };
 

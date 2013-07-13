@@ -87,7 +87,6 @@ window.require.register("application", function(exports, require, module) {
       var HomeView, Router;
       HomeView = require('views/home_view');
       Router = require('lib/router');
-      require('test');
       this.homeView = new HomeView();
       this.router = new Router();
       return typeof Object.freeze === "function" ? Object.freeze(this) : void 0;
@@ -177,9 +176,38 @@ window.require.register("models/model", function(exports, require, module) {
   })(Backbone.Model);
   
 });
-window.require.register("test", function(exports, require, module) {
-  
+window.require.register("popup", function(exports, require, module) {
+  var Popup,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
   console.log("loading from extension");
+
+  module.exports = Popup = (function(_super) {
+
+    __extends(Popup, _super);
+
+    function Popup() {
+      return Popup.__super__.constructor.apply(this, arguments);
+    }
+
+    Popup.prototype.initialize = function() {
+      return chrome.tabs.getSelected(null, function(tab) {
+        var port;
+        port = chrome.tabs.connect(tab.id);
+        port.postMessage({
+          "hello": "world"
+        });
+        return port.onMessage.addListener(function(response) {
+          console.error(JSON.stringify(response));
+          return jQuery('#home-view').html("<img src='" + response.poster + "' />");
+        });
+      });
+    };
+
+    return Popup;
+
+  })(View);
   
 });
 window.require.register("views/home_view", function(exports, require, module) {
@@ -202,6 +230,20 @@ window.require.register("views/home_view", function(exports, require, module) {
     HomeView.prototype.id = 'home-view';
 
     HomeView.prototype.template = template;
+
+    HomeView.prototype.initialize = function() {
+      return chrome.tabs.getSelected(null, function(tab) {
+        var port;
+        port = chrome.tabs.connect(tab.id);
+        port.postMessage({
+          "hello": "world"
+        });
+        return port.onMessage.addListener(function(response) {
+          console.error(JSON.stringify(response));
+          return jQuery('#home-view').html("<img src='" + response.poster + "' />");
+        });
+      });
+    };
 
     return HomeView;
 

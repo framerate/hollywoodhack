@@ -87,6 +87,7 @@ window.require.register("application", function(exports, require, module) {
       var HomeView, Router;
       HomeView = require('views/home_view');
       Router = require('lib/router');
+      require('test');
       this.homeView = new HomeView();
       this.router = new Router();
       return typeof Object.freeze === "function" ? Object.freeze(this) : void 0;
@@ -174,6 +175,11 @@ window.require.register("models/model", function(exports, require, module) {
     return Model;
 
   })(Backbone.Model);
+  
+});
+window.require.register("test", function(exports, require, module) {
+  
+  console.log("testing..");
   
 });
 window.require.register("views/home_view", function(exports, require, module) {

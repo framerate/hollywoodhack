@@ -179,7 +179,7 @@ window.require.register("models/model", function(exports, require, module) {
 });
 window.require.register("test", function(exports, require, module) {
   
-  console.log("testing..");
+  console.log("loading from extension");
   
 });
 window.require.register("views/home_view", function(exports, require, module) {

@@ -1,1 +1,1 @@
-console.log "testing.."
+console.log "loading from extension"

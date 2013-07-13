@@ -203,6 +203,22 @@ window.require.register("views/home_view", function(exports, require, module) {
 
     HomeView.prototype.template = template;
 
+    HomeView.prototype.initialize = function() {
+      var graphUrl, script;
+      if (localStorage.accessToken) {
+        graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=displayUser";
+        alert(graphUrl);
+        script = document.createElement("script");
+        script.src = graphUrl;
+        document.body.appendChild(script);
+        return displayUser(function(user) {
+          return alert(user);
+        });
+      } else {
+        return alert("no localStorage.accessToken found");
+      }
+    };
+
     return HomeView;
 
   })(View);
@@ -214,7 +230,7 @@ window.require.register("views/templates/home", function(exports, require, modul
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<H1>HELLO WORLD</H1>');
+  buf.push('<H1>HELLO WORLD</H1><h1>Facebook Connect For Chrome Extension Test<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Facebook Connect</a></p></h1>');
   }
   return buf.join("");
   };

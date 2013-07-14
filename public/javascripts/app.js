@@ -263,14 +263,15 @@ window.require.register("views/home_view", function(exports, require, module) {
         });
       });
       this.backgroundPage = chrome.extension.getBackgroundPage();
-      console.log(this);
-      return this.updateData();
+      this.user = this.backgroundPage.data.user;
+      console.log("got user from background", this.user);
+      if (!!this.user) {
+        return this.updateData(this.user);
+      }
     };
 
-    HomeView.prototype.updateData = function() {
-      var user;
-      user = this.backgroundPage.user;
-      console.log(user);
+    HomeView.prototype.updateData = function(user) {
+      console.log(user.name);
       this.$('body').append("Welcome " + (user != null ? user.name : void 0));
       return this.render();
     };

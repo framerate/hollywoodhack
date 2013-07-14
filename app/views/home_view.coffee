@@ -15,14 +15,13 @@ module.exports = class HomeView extends View
 
 
     @backgroundPage = chrome.extension.getBackgroundPage()
-    console.log @
-    # listen to backgroundpage event to call updateData
-    # for now...
-    @updateData()
+    # get data from background page
+    @user = @backgroundPage.data.user
+    console.log "got user from background", @user
+    @updateData(@user) unless not @user
 
-  updateData: ->
-    user = @backgroundPage.user
-    console.log user
+  updateData: (user) ->
+    console.log user.name
     @$('body').append("Welcome "+user?.name)
     @render()
 

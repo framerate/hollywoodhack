@@ -17,7 +17,6 @@ module.exports = class ActionView extends View
   initialize: (@options = {}) ->
     console.log 'action sub view loaded', @options
     @listenTo(@model, "change", @render)
-    setTimeout (@thumbsUpClick), 1000
     @render()
 
   getRenderData: ->

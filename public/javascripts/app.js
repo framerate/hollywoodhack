@@ -388,7 +388,6 @@ window.require.register("views/action_view", function(exports, require, module) 
       this.options = options != null ? options : {};
       console.log('action sub view loaded', this.options);
       this.listenTo(this.model, "change", this.render);
-      setTimeout(this.thumbsUpClick, 1000);
       return this.render();
     };
 

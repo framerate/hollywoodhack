@@ -1,5 +1,5 @@
 var successURL = 'https://www.facebook.com/connect/login_success.html';
-
+// localStorage.removeItem('accessToken');
 function onFacebookLogin() {
     if (!localStorage.accessToken) {
         chrome.tabs.getAllInWindow(null, function(tabs) {
@@ -14,14 +14,15 @@ function onFacebookLogin() {
                 }
             }
         });
-    } else {}
+    } else {
+    }
 }
 chrome.tabs.onUpdated.addListener(onFacebookLogin);
 
 // console.log("x",popup)
 if (localStorage.accessToken) {
     console.log("fb api query...")
-    var graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=useFaceBookData";
+    var graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken 
     console.log(graphUrl);
 
     var script = document.createElement("script");
@@ -29,11 +30,11 @@ if (localStorage.accessToken) {
     document.head.appendChild(script);
 
     function useFaceBookData(user) {
-        console.log(user);
+        // console.log(user);
         this.user=user;
         // trigger event on this with user data
         // listen to this even in popup
-    }
+     }
 } else {
     console.log("no accessToken yet...")
 }

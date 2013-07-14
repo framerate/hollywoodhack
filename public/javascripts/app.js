@@ -231,6 +231,7 @@ window.require.register("test", function(exports, require, module) {
 });
 window.require.register("views/home_view", function(exports, require, module) {
   var HomeView, View, template,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -243,6 +244,7 @@ window.require.register("views/home_view", function(exports, require, module) {
     __extends(HomeView, _super);
 
     function HomeView() {
+      this.initialize = __bind(this.initialize, this);
       return HomeView.__super__.constructor.apply(this, arguments);
     }
 
@@ -251,17 +253,16 @@ window.require.register("views/home_view", function(exports, require, module) {
     HomeView.prototype.template = template;
 
     HomeView.prototype.initialize = function() {
-      return chrome.tabs.getSelected(null, function(tab) {
-        var port;
-        port = chrome.tabs.connect(tab.id);
-        port.postMessage({
-          "hello": "world"
-        });
-        return port.onMessage.addListener(function(response) {
-          console.error(JSON.stringify(response));
-          return jQuery('#home-view').html("<img src='" + response.poster + "' />");
-        });
-      });
+      this.backgroundPage = chrome.extension.getBackgroundPage();
+      return this.updateData();
+    };
+
+    HomeView.prototype.updateData = function() {
+      var user;
+      user = this.backgroundPage.user;
+      console.log(user);
+      this.$('body').append("Welcome " + (user != null ? user.name : void 0));
+      return this.render();
     };
 
     return HomeView;
@@ -275,7 +276,7 @@ window.require.register("views/templates/home", function(exports, require, modul
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<H1>HELLO WORLD</H1>');
+  buf.push('<H1>HELLO WORLD</H1><h1>Facebook Connect For Chrome Extension Test<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Facebook Connect</a></p></h1>');
   }
   return buf.join("");
   };

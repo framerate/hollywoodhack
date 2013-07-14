@@ -1,5 +1,4 @@
 var successURL = 'https://www.facebook.com/connect/login_success.html';
-localStorage.removeItem('accessToken');
 
 function onFacebookLogin() {
     if (!localStorage.accessToken) {
@@ -18,3 +17,23 @@ function onFacebookLogin() {
     } else {}
 }
 chrome.tabs.onUpdated.addListener(onFacebookLogin);
+
+// console.log("x",popup)
+if (localStorage.accessToken) {
+    console.log("fb api query...")
+    var graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=useFaceBookData";
+    console.log(graphUrl);
+
+    var script = document.createElement("script");
+    script.src = graphUrl;
+    document.head.appendChild(script);
+
+    function useFaceBookData(user) {
+        console.log(user);
+        this.user=user;
+        // trigger event on this with user data
+        // listen to this even in popup
+    }
+} else {
+    console.log("no accessToken yet...")
+}

@@ -6,17 +6,14 @@ module.exports = class HomeView extends View
   template: template
 
   initialize: ->
-    if localStorage.accessToken
-        graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=displayUser";
-        # alert(graphUrl);
-    
-        script = document.createElement("script");
-        script.src = graphUrl;
-        document.body.appendChild(script);
-    
-        window.displayUser = (user) ->
-          # $('body').append("TEST "+user)
-          console.log user
-    else 
-      console.log("no localStorage.accessToken found")
+    @backgroundPage = chrome.extension.getBackgroundPage()
+    # listen to backgroundpage event to call updateData
+    # for now...
+    @updateData()
+
+  updateData: ->
+    user = @backgroundPage.user
+    console.log user
+    @$('body').append("Welcome "+user.name)
+    @render()
 

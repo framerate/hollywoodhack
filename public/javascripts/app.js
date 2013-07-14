@@ -204,18 +204,16 @@ window.require.register("views/home_view", function(exports, require, module) {
     HomeView.prototype.template = template;
 
     HomeView.prototype.initialize = function() {
-      var graphUrl, script;
-      if (localStorage.accessToken) {
-        graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=displayUser";
-        script = document.createElement("script");
-        script.src = graphUrl;
-        document.body.appendChild(script);
-        return window.displayUser = function(user) {
-          return console.log(user);
-        };
-      } else {
-        return console.log("no localStorage.accessToken found");
-      }
+      this.backgroundPage = chrome.extension.getBackgroundPage();
+      return this.updateData();
+    };
+
+    HomeView.prototype.updateData = function() {
+      var user;
+      user = this.backgroundPage.user;
+      console.log(user);
+      this.$('body').append("Welcome " + user.name);
+      return this.render();
     };
 
     return HomeView;

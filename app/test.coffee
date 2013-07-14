@@ -12,11 +12,11 @@ usersQuery = new Parse.Query(Users);
 saveUser = (user) ->
   return if not user.name
   # update if already exists
-  usersQuery.equalTo 'username', 'complete'
+  usersQuery.equalTo 'username', me
   usersQuery.find
     success: (results) ->
-      if results
-        console.log "updating user", results[0].get('username'), results
+      if results.length
+        console.log "updating user", results
         results[0].set 'username', user.name
         results[0].set 'movieId', user.movieId if user.movieId
         results[0].set 'rating', user.rating if user.rating?
@@ -38,7 +38,7 @@ saveUser = (user) ->
           ,error: (object, error) ->
             console.error "ERROR: " + error.description
         
-    error: (e) -> console.log "XXXXXXXX", e
+    error: (e) -> console.log "error", e
 
 
 
@@ -51,6 +51,8 @@ getFriendsForMovie = (movieId = 0, myFriendsFbIds = []) ->
     success: (results) -> console.log "results",results
     error: (e) -> console.log "error",e
 
-saveUser {name: 'complete', movieId: 999, rating: false}
+me = "Jeff S"
+
+saveUser {name: me, movieId: 555, rating: false}
 
 getFriendsForMovie 111, ['aaa']

@@ -17,7 +17,7 @@ $(document).ready(function(){
       urlDesc = encodeURI(desc);
       $.getJSON('http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=snxd2wjz2z9n9vvrhpyv6mgn&q='+desc, function(data) {
         var poster = $('<img />').attr('src', data.movies[0].posters.detailed);
-        port.postMessage({"poster":  data.movies[0].posters.detailed});
+        port.postMessage({"poster":  data.movies[0].posters.detailed, "movieId": data.movies[0].id});
         // $('body').prepend(poster);
       });
     });

@@ -15,6 +15,7 @@ module.exports = class ActionModel extends Backbone.Model
     poster: ""
     fbid: ""
     friends: ""
+    movieId: ""
 
   updateData: (data) ->
     console.log "got data from background", data
@@ -23,3 +24,4 @@ module.exports = class ActionModel extends Backbone.Model
     @set "fbid", data.user.id # test this
     @set "friends", data.friends.data
     console.log "[action_model] : friends: " + data.friends.data
+    @set "movieId", data.movie.movieId

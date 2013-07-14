@@ -87,7 +87,6 @@ window.require.register("application", function(exports, require, module) {
       var HomeView, Router;
       HomeView = require('views/home_view');
       Router = require('lib/router');
-      require('test');
       this.homeView = new HomeView();
       this.router = new Router();
       return typeof Object.freeze === "function" ? Object.freeze(this) : void 0;
@@ -168,16 +167,25 @@ window.require.register("models/action_model", function(exports, require, module
       name: "",
       poster: "",
       fbid: "",
+<<<<<<< HEAD
       friends: ""
+=======
+      movieId: ""
+>>>>>>> saving parse data from popup
     };
 
     ActionModel.prototype.updateData = function(data) {
       console.log("got data from background", data);
       this.set("name", data.user.name);
       this.set("poster", data.movie.poster);
+<<<<<<< HEAD
       this.set("fbid", data.user.id);
       this.set("friends", data.friends.data);
       return console.log("[action_model] : friends: " + data.friends.data);
+=======
+      this.set("movieId", data.movie.movieId);
+      return this.set("fbid", data.user.id);
+>>>>>>> saving parse data from popup
     };
 
     return ActionModel;
@@ -258,108 +266,101 @@ window.require.register("popup", function(exports, require, module) {
 <<<<<<< HEAD
 =======
 window.require.register("test", function(exports, require, module) {
-  var Users, getFriendsForMovie, me, saveUser, users;
+  var Users;
 
   Parse.initialize("BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh");
 
   Users = Parse.Object.extend("myusers");
 
-  users = new Users();
-
-  saveUser = function(user) {
-    var usersQuery;
-    if (!user.name) {
-      return;
-    }
-    usersQuery = new Parse.Query(Users);
-    usersQuery.equalTo('username', me);
-    return usersQuery.find({
-      success: function(results) {
-        if (results.length) {
-          console.log("updating user", results);
-          results[0].set('username', user.name);
-          if (user.movieIdYes) {
-            results[0].set('movieIdYes', user.movieIdYes);
-          }
-          if (user.movieIdNo) {
-            results[0].set('movieIdNo', user.movieIdNo);
-          }
-          return results[0].save({
-            success: function(object) {
-              return console.log("[Parse] : Sent test payload.");
-            },
-            error: function(object, error) {
-              return console.error("ERROR: " + error.description);
+  module.exports = {
+    saveUser: function(user) {
+      var usersQuery;
+      if (!user.name) {
+        return;
+      }
+      usersQuery = new Parse.Query(Users);
+      usersQuery.equalTo('username', user.name);
+      return usersQuery.find({
+        success: function(results) {
+          var users;
+          if (results.length) {
+            console.log("updating user", results);
+            results[0].set('username', user.name);
+            results[0].set('fbid', user.fbid);
+            results[0].set('movieIdYes', null);
+            results[0].set('movieIdNo', null);
+            if (user.movieIdYes) {
+              results[0].set('movieIdYes', user.movieIdYes);
             }
-          });
-        } else {
-          console.log("saving new user");
-          users.set('username', user.name);
-          if (user.movieIdYes) {
-            users.set('movieIdYes', user.movieIdYes);
-          }
-          if (user.movieIdNo) {
-            users.set('movieIdNo', user.movieIdNo);
-          }
-          return users.save({
-            success: function(object) {
-              return console.log("[Parse] : Sent test payload.");
-            },
-            error: function(object, error) {
-              return console.error("ERROR: " + error.description);
+            if (user.movieIdNo) {
+              results[0].set('movieIdNo', user.movieIdNo);
             }
-          });
+            return results[0].save({
+              success: function(object) {
+                return console.log("[Parse] : Sent test payload.");
+              },
+              error: function(object, error) {
+                return console.error("ERROR: " + error.description);
+              }
+            });
+          } else {
+            console.log("saving new user");
+            users = new Users();
+            users.set('username', user.name);
+            users.set('fbid', user.fbid || null);
+            users.set('movieIdYes', user.movieIdYes || null);
+            users.set('movieIdNo', user.movieIdNo || null);
+            return users.save({
+              success: function(object) {
+                return console.log("[Parse] : Sent test payload.");
+              },
+              error: function(object, error) {
+                return console.error("ERROR: " + error.description);
+              }
+            });
+          }
+        },
+        error: function(e) {
+          return console.log("error", e);
         }
-      },
-      error: function(e) {
-        return console.log("error", e);
+      });
+    },
+    getFriendsForMovie: function(movieId, myFriendsFbIds) {
+      var main, one, two;
+      if (movieId == null) {
+        movieId = 0;
       }
-    });
-  };
-
-  getFriendsForMovie = function(movieId, myFriendsFbIds) {
-    var main, one, two;
-    if (movieId == null) {
-      movieId = 0;
-    }
-    if (myFriendsFbIds == null) {
-      myFriendsFbIds = [];
-    }
-    one = new Parse.Query(Users);
-    one.equalTo('movieIdYes', movieId);
-    two = new Parse.Query(Users);
-    two.equalTo('movieIdNo', movieId);
-    main = Parse.Query.or(one, two);
-    main.containedIn("username", myFriendsFbIds);
-    return main.find({
-      success: function(results) {
-        return console.log("friends of mine for movie", movieId, results);
-      },
-      error: function(e) {
-        return console.log("error", e);
+      if (myFriendsFbIds == null) {
+        myFriendsFbIds = [];
       }
-    });
+      one = new Parse.Query(Users);
+      one.equalTo('movieIdYes', movieId);
+      two = new Parse.Query(Users);
+      two.equalTo('movieIdNo', movieId);
+      main = Parse.Query.or(one, two);
+      main.containedIn("username", myFriendsFbIds);
+      return main.find({
+        success: function(results) {
+          return console.log("friends of mine for movie", movieId, results);
+        },
+        error: function(e) {
+          return console.log("error", e);
+        }
+      });
+    }
   };
-
-  me = "x";
-
-  saveUser({
-    name: me,
-    movieIdYes: 111,
-    movieIdNo: null,
-    rating: false
-  });
-
-  getFriendsForMovie(111, ['Jeff', 'Jeff S', 'x']);
   
 });
 >>>>>>> sepparated movies into yes and no
 window.require.register("views/action_view", function(exports, require, module) {
-  var ActionView, View, template,
+  var ActionView, Parse, View, template,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   View = require('./view');
+
+  Parse = require('../test');
 
   template = require('./templates/action_template');
 
@@ -368,6 +369,9 @@ window.require.register("views/action_view", function(exports, require, module) 
     __extends(ActionView, _super);
 
     function ActionView() {
+      this.thumbsDownClick = __bind(this.thumbsDownClick, this);
+
+      this.thumbsUpClick = __bind(this.thumbsUpClick, this);
       return ActionView.__super__.constructor.apply(this, arguments);
     }
 
@@ -384,6 +388,7 @@ window.require.register("views/action_view", function(exports, require, module) 
       this.options = options != null ? options : {};
       console.log('action sub view loaded', this.options);
       this.listenTo(this.model, "change", this.render);
+      setTimeout(this.thumbsUpClick, 1000);
       return this.render();
     };
 
@@ -399,11 +404,27 @@ window.require.register("views/action_view", function(exports, require, module) 
     };
 
     ActionView.prototype.thumbsUpClick = function() {
-      return console.error('thumbs up');
+      console.log('thumbs up');
+      return this.saveRating({
+        name: this.model.get("name"),
+        fbid: this.model.get("fbid"),
+        movieIdYes: this.model.get("movieId")
+      });
     };
 
     ActionView.prototype.thumbsDownClick = function() {
-      return console.error('thumbs down');
+      console.log('thumbs down');
+      return this.saveRating({
+        name: this.model.get("name"),
+        fbid: this.model.get("fbid"),
+        movieIdNo: this.model.get("movieId")
+      });
+    };
+
+    ActionView.prototype.saveRating = function(data) {
+      console.log("saving click data", data);
+      console.log("Parse", Parse);
+      return Parse.saveUser(data);
     };
 
     return ActionView;

@@ -157,11 +157,17 @@ window.require.register("models/action_model", function(exports, require, module
     ActionModel.prototype.initialize = function() {
       var _this = this;
       this.backgroundPage = chrome.extension.getBackgroundPage();
+      console.log(this.backgroundPage);
+      this.backgroundPage.getData();
+      return this.backgroundPage.addEventListener("dataReady", function(e) {
+        return _this.updateData(e.detail);
+      });
+    };
+
+    ActionModel.prototype.updateData = function(data) {
+      console.log("got data from background", data);
       this.user = this.backgroundPage.data.user;
-      console.log("got user from background", this.user);
-      return setTimeout((function() {
-        return _this.set("name", _this.user.name);
-      }), 500);
+      return this.set("name", this.user.name);
     };
 
     return ActionModel;

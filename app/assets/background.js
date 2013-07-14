@@ -11,7 +11,7 @@ function onFacebookLogin() {
                     console.log(access);
                     localStorage.accessToken = access;
                     chrome.tabs.onUpdated.removeListener(onFacebookLogin);
-                    queryFacebook();
+                    // queryFacebook();
                     return;
                 }
             }
@@ -32,16 +32,35 @@ function queryFacebook () {
         document.head.appendChild(script);
 
     } else {
-        console.log("no accessToken yet...")
+        console.log("no accessToken yet...");
     }
 }
 
-queryFacebook();
+// queryFacebook();
+
+function getData () {
+    queryFacebook();
+    setTimeout(function(){data.test=true; sendData();},1000);
+    // queryRottenTomatoes();
+}
+
+function sendData () {
+    if(data.user && data.test) {
+        console.log ("Data ready", data);
+        dataReady = document.createEvent('CustomEvent');
+        dataReady.initCustomEvent('dataReady', true, true, data);
+        window.dispatchEvent(dataReady);
+        data = {};
+    } else {
+        console.log ("Data not quite ready", data);
+    }
+}
 
 
 function FacebookDataReady(user) {
     console.log("Got data from facebook", user);
     data.user=user;
+    sendData();
  }
 
 

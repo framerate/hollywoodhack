@@ -166,13 +166,15 @@ window.require.register("models/action_model", function(exports, require, module
 
     ActionModel.prototype.defaults = {
       name: "",
-      poster: ""
+      poster: "",
+      fbid: ""
     };
 
     ActionModel.prototype.updateData = function(data) {
       console.log("got data from background", data);
       this.set("name", data.user.name);
-      return this.set("poster", data.movie.poster);
+      this.set("poster", data.movie.poster);
+      return this.set("fbid", data.user.id);
     };
 
     return ActionModel;
@@ -251,19 +253,22 @@ window.require.register("popup", function(exports, require, module) {
   
 });
 window.require.register("test", function(exports, require, module) {
-  var TestObject, testObject;
+  var TRObject, trObject;
 
   Parse.initialize("BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh");
 
-  TestObject = Parse.Object.extend("TestObject");
+  TRObject = Parse.Object.extend("TRObject");
 
-  testObject = new TestObject;
+  trObject = new TRObject;
 
-  testObject.save({
-    foo: "bar"
-  }, {
+  trObject.set("FBID", "FAKEBLOCK");
+
+  trObject.save(null, {
     success: function(object) {
       return console.log("[Parse] : Sent test payload.");
+    },
+    error: function(object, error) {
+      return console.error("ERROR: " + error.description);
     }
   });
   
@@ -289,6 +294,11 @@ window.require.register("views/action_view", function(exports, require, module) 
 
     ActionView.prototype.template = template;
 
+    ActionView.prototype.events = {
+      "click #thumbsUp": "thumbsUpClick",
+      "click #thumbsDown": "thumbsDownClick"
+    };
+
     ActionView.prototype.initialize = function(options) {
       this.options = options != null ? options : {};
       console.log('action sub view loaded', this.options);
@@ -305,6 +315,14 @@ window.require.register("views/action_view", function(exports, require, module) 
         this.$('#loading').hide();
         return this.$('#content').show();
       }
+    };
+
+    ActionView.prototype.thumbsUpClick = function() {
+      return console.error('thumbs up');
+    };
+
+    ActionView.prototype.thumbsDownClick = function() {
+      return console.error('thumbs down');
     };
 
     return ActionView;
@@ -362,9 +380,9 @@ window.require.register("views/templates/action_template", function(exports, req
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div id="loading"><p>Loading...</p></div><div id="content"><p>welcome ' + escape((interp = name) == null ? '' : interp) + '</p><img');
+  buf.push('<div id="loading"><p>Loading...</p></div><div id="content"><p id="welcome">welcome ' + escape((interp = name) == null ? '' : interp) + '</p><div id="poster"><img');
   buf.push(attrs({ 'src':("" + (poster) + "") }, {"src":true}));
-  buf.push('/></div>');
+  buf.push('/></div><div id="buttons"><div id="thumbsUp">Thumbs Up</div><div id="thumbsDown">Thumbs Down</div></div></div>');
   }
   return buf.join("");
   };
@@ -375,7 +393,7 @@ window.require.register("views/templates/home", function(exports, require, modul
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<h1>Home View persistant header</h1><div id="facebook-connect"><h3>You must connect to Facebook to use Trailer Rater<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Connect to Facebook</a></p></h3></div><div id="action-sub-view"></div>');
+  buf.push('<h1 id="test">Trailer Rater</h1><div id="facebook-connect"><h3>You must connect to Facebook to use Trailer Rater<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Connect to Facebook</a></p></h3></div><div id="action-sub-view"></div>');
   }
   return buf.join("");
   };

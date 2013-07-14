@@ -9,6 +9,9 @@ template = require './templates/action_template'
 module.exports = class ActionView extends View
   id: 'action-view'
   template: template
+  events: 
+    "click #thumbsUp":  "thumbsUpClick"
+    "click #thumbsDown":  "thumbsDownClick"
 
   initialize: (@options = {}) ->
     console.log 'action sub view loaded', @options
@@ -23,3 +26,9 @@ module.exports = class ActionView extends View
     if @model.get 'name'
       @$('#loading').hide()
       @$('#content').show()
+
+  thumbsUpClick: ->
+    console.error 'thumbs up'
+
+  thumbsDownClick: ->
+    console.error 'thumbs down'

@@ -13,8 +13,10 @@ module.exports = class ActionModel extends Backbone.Model
   defaults:
     name: ""
     poster: ""
+    fbid: ""
 
   updateData: (data) ->
     console.log "got data from background", data
     @set "name", data.user.name
     @set "poster", data.movie.poster
+    @set "fbid", data.user.id # test this

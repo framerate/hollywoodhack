@@ -177,9 +177,56 @@ window.require.register("models/model", function(exports, require, module) {
   })(Backbone.Model);
   
 });
-window.require.register("test", function(exports, require, module) {
-  
+window.require.register("popup", function(exports, require, module) {
+  var Popup,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
   console.log("loading from extension");
+
+  module.exports = Popup = (function(_super) {
+
+    __extends(Popup, _super);
+
+    function Popup() {
+      return Popup.__super__.constructor.apply(this, arguments);
+    }
+
+    Popup.prototype.initialize = function() {
+      return chrome.tabs.getSelected(null, function(tab) {
+        var port;
+        port = chrome.tabs.connect(tab.id);
+        port.postMessage({
+          "hello": "world"
+        });
+        return port.onMessage.addListener(function(response) {
+          console.error(JSON.stringify(response));
+          return jQuery('#home-view').html("<img src='" + response.poster + "' />");
+        });
+      });
+    };
+
+    return Popup;
+
+  })(View);
+  
+});
+window.require.register("test", function(exports, require, module) {
+  var TestObject, testObject;
+
+  Parse.initialize("BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh");
+
+  TestObject = Parse.Object.extend("TestObject");
+
+  testObject = new TestObject;
+
+  testObject.save({
+    foo: "bar"
+  }, {
+    success: function(object) {
+      return console.log("yay it worked");
+    }
+  });
   
 });
 window.require.register("views/home_view", function(exports, require, module) {
@@ -204,16 +251,17 @@ window.require.register("views/home_view", function(exports, require, module) {
     HomeView.prototype.template = template;
 
     HomeView.prototype.initialize = function() {
-      this.backgroundPage = chrome.extension.getBackgroundPage();
-      return this.updateData();
-    };
-
-    HomeView.prototype.updateData = function() {
-      var user;
-      user = this.backgroundPage.user;
-      console.log(user);
-      this.$('body').append("Welcome " + user.name);
-      return this.render();
+      return chrome.tabs.getSelected(null, function(tab) {
+        var port;
+        port = chrome.tabs.connect(tab.id);
+        port.postMessage({
+          "hello": "world"
+        });
+        return port.onMessage.addListener(function(response) {
+          console.error(JSON.stringify(response));
+          return jQuery('#home-view').html("<img src='" + response.poster + "' />");
+        });
+      });
     };
 
     return HomeView;
@@ -227,7 +275,7 @@ window.require.register("views/templates/home", function(exports, require, modul
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<H1>HELLO WORLD</H1><h1>Facebook Connect For Chrome Extension Test<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Facebook Connect</a></p></h1>');
+  buf.push('<H1>HELLO WORLD</H1>');
   }
   return buf.join("");
   };

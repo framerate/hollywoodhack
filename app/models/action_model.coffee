@@ -14,11 +14,12 @@ module.exports = class ActionModel extends Backbone.Model
     name: ""
     poster: ""
     fbid: ""
+    friends: ""
 
   updateData: (data) ->
     console.log "got data from background", data
     @set "name", data.user.name
     @set "poster", data.movie.poster
     @set "fbid", data.user.id # test this
-    @set "friends", data.friends
-    console.log "friends: " + data.friends
+    @set "friends", data.friends.data
+    console.log "[action_model] : friends: " + data.friends.data

@@ -167,7 +167,8 @@ window.require.register("models/action_model", function(exports, require, module
     ActionModel.prototype.defaults = {
       name: "",
       poster: "",
-      fbid: ""
+      fbid: "",
+      friends: ""
     };
 
     ActionModel.prototype.updateData = function(data) {
@@ -175,8 +176,8 @@ window.require.register("models/action_model", function(exports, require, module
       this.set("name", data.user.name);
       this.set("poster", data.movie.poster);
       this.set("fbid", data.user.id);
-      this.set("friends", data.friends);
-      return console.log("friends: " + data.friends);
+      this.set("friends", data.friends.data);
+      return console.log("[action_model] : friends: " + data.friends.data);
     };
 
     return ActionModel;
@@ -455,7 +456,25 @@ window.require.register("views/templates/action_template", function(exports, req
   var interp;
   buf.push('<div id="loading"><p>Loading...</p></div><div id="content"><p id="welcome">welcome ' + escape((interp = name) == null ? '' : interp) + '</p><div id="poster"><img');
   buf.push(attrs({ 'src':("" + (poster) + "") }, {"src":true}));
-  buf.push('/></div><div id="buttons"><div id="thumbsUp">Thumbs Up</div><div id="thumbsDown">Thumbs Down</div></div></div>');
+  buf.push('/></div><div id="buttons"><div id="thumbsUp">Thumbs Up</div><div id="thumbsDown">Thumbs Down</div></div><div id="friends">');
+  // iterate friends
+  ;(function(){
+    if ('number' == typeof friends.length) {
+      for (var $index = 0, $$l = friends.length; $index < $$l; $index++) {
+        var friend = friends[$index];
+
+  buf.push('<li>' + escape((interp = friend.name) == null ? '' : interp) + '</li>');
+      }
+    } else {
+      for (var $index in friends) {
+        var friend = friends[$index];
+
+  buf.push('<li>' + escape((interp = friend.name) == null ? '' : interp) + '</li>');
+     }
+    }
+  }).call(this);
+
+  buf.push('</div></div>');
   }
   return buf.join("");
   };

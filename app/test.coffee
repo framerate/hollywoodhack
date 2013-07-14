@@ -17,8 +17,8 @@ saveUser = (user) ->
       if results.length
         console.log "updating user", results
         results[0].set 'username', user.name
-        results[0].addUnique 'movieId', user.movieId if user.movieId
-        results[0].set 'rating', user.rating if user.rating?
+        results[0].set 'movieIdYes', user.movieIdYes if user.movieIdYes
+        results[0].set 'movieIdNo', user.movieIdNo if user.movieIdNo
         results[0].save 
           success: (object) ->
             console.log "[Parse] : Sent test payload."
@@ -28,8 +28,8 @@ saveUser = (user) ->
       else
         console.log "saving new user"
         users.set 'username', user.name
-        users.add 'movieId', user.movieId if user.movieId
-        users.set 'rating', user.rating if user.rating?
+        users.set 'movieIdYes', user.movieIdYes if user.movieIdYes
+        users.set 'movieIdNo', user.movieIdNo if user.movieIdNo
         users.save 
           success: (object) ->
             console.log "[Parse] : Sent test payload."
@@ -44,15 +44,18 @@ saveUser = (user) ->
 
 
 getFriendsForMovie = (movieId = 0, myFriendsFbIds = []) ->
-  usersQuery = new Parse.Query(Users);
-  usersQuery.containedIn "username", myFriendsFbIds
-  usersQuery.equalTo('movieId', movieId)
-  usersQuery.find
+  one = new Parse.Query(Users);
+  one.equalTo('movieIdYes', movieId)
+  two = new Parse.Query(Users);
+  two.equalTo('movieIdNo', movieId)
+  main = Parse.Query.or(one, two);
+  main.containedIn "username", myFriendsFbIds
+  main.find
     success: (results) -> console.log "friends of mine for movie", movieId,results
     error: (e) -> console.log "error",e
 
-me = "Jeff S"
+me = "x"
 
-saveUser {name: me, movieId: 666, rating: false}
+saveUser {name: me, movieIdYes: 111, movieIdNo:null, rating: false}
 
-getFriendsForMovie 777, ['jeff','Jeff S']
+getFriendsForMovie 111, ['Jeff','Jeff S', 'x']

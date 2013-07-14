@@ -255,6 +255,105 @@ window.require.register("popup", function(exports, require, module) {
   })(View);
   
 });
+<<<<<<< HEAD
+=======
+window.require.register("test", function(exports, require, module) {
+  var Users, getFriendsForMovie, me, saveUser, users;
+
+  Parse.initialize("BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh");
+
+  Users = Parse.Object.extend("myusers");
+
+  users = new Users();
+
+  saveUser = function(user) {
+    var usersQuery;
+    if (!user.name) {
+      return;
+    }
+    usersQuery = new Parse.Query(Users);
+    usersQuery.equalTo('username', me);
+    return usersQuery.find({
+      success: function(results) {
+        if (results.length) {
+          console.log("updating user", results);
+          results[0].set('username', user.name);
+          if (user.movieIdYes) {
+            results[0].set('movieIdYes', user.movieIdYes);
+          }
+          if (user.movieIdNo) {
+            results[0].set('movieIdNo', user.movieIdNo);
+          }
+          return results[0].save({
+            success: function(object) {
+              return console.log("[Parse] : Sent test payload.");
+            },
+            error: function(object, error) {
+              return console.error("ERROR: " + error.description);
+            }
+          });
+        } else {
+          console.log("saving new user");
+          users.set('username', user.name);
+          if (user.movieIdYes) {
+            users.set('movieIdYes', user.movieIdYes);
+          }
+          if (user.movieIdNo) {
+            users.set('movieIdNo', user.movieIdNo);
+          }
+          return users.save({
+            success: function(object) {
+              return console.log("[Parse] : Sent test payload.");
+            },
+            error: function(object, error) {
+              return console.error("ERROR: " + error.description);
+            }
+          });
+        }
+      },
+      error: function(e) {
+        return console.log("error", e);
+      }
+    });
+  };
+
+  getFriendsForMovie = function(movieId, myFriendsFbIds) {
+    var main, one, two;
+    if (movieId == null) {
+      movieId = 0;
+    }
+    if (myFriendsFbIds == null) {
+      myFriendsFbIds = [];
+    }
+    one = new Parse.Query(Users);
+    one.equalTo('movieIdYes', movieId);
+    two = new Parse.Query(Users);
+    two.equalTo('movieIdNo', movieId);
+    main = Parse.Query.or(one, two);
+    main.containedIn("username", myFriendsFbIds);
+    return main.find({
+      success: function(results) {
+        return console.log("friends of mine for movie", movieId, results);
+      },
+      error: function(e) {
+        return console.log("error", e);
+      }
+    });
+  };
+
+  me = "x";
+
+  saveUser({
+    name: me,
+    movieIdYes: 111,
+    movieIdNo: null,
+    rating: false
+  });
+
+  getFriendsForMovie(111, ['Jeff', 'Jeff S', 'x']);
+  
+});
+>>>>>>> sepparated movies into yes and no
 window.require.register("views/action_view", function(exports, require, module) {
   var ActionView, View, template,
     __hasProp = {}.hasOwnProperty,

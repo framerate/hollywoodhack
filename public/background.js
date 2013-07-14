@@ -1,5 +1,6 @@
 var successURL = 'https://www.facebook.com/connect/login_success.html';
 var data = {};
+var friendIdArray;
 // localStorage.removeItem('accessToken');
 function onFacebookLogin() {
     if (!localStorage.accessToken) {
@@ -61,6 +62,13 @@ function queryFacebookFriends () {
 function FacebookFriendDataReady(friends) {
     console.log("[Background] : Got friend data from facebook", friends);
     data.friends=friends
+    friendIdArray = [];
+    for (var i = 0; i < friends.data.length; ++i)
+    {
+        console.log(friends.data[i].id);
+        friendIdArray.push(friends.data[i].id);
+    }
+    console.log('[Background] : friendIdArray is done!')
     sendData();
  }
 

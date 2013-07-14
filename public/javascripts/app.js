@@ -154,7 +154,16 @@ window.require.register("models/action_model", function(exports, require, module
       return ActionModel.__super__.constructor.apply(this, arguments);
     }
 
-    ActionModel.prototype.initialize = function() {};
+    ActionModel.prototype.initialize = function() {
+      var _this = this;
+      this.set("name", "hard coded name");
+      this.backgroundPage = chrome.extension.getBackgroundPage();
+      this.user = this.backgroundPage.data.user;
+      console.log("got user from background", this.user);
+      return setTimeout((function() {
+        return _this.set("name", _this.user.name);
+      }), 500);
+    };
 
     return ActionModel;
 
@@ -273,7 +282,12 @@ window.require.register("views/action_view", function(exports, require, module) 
     ActionView.prototype.initialize = function(options) {
       this.options = options != null ? options : {};
       console.log('action sub view loaded', this.options);
+      this.listenTo(this.model, "change", this.render);
       return this.render();
+    };
+
+    ActionView.prototype.getRenderData = function() {
+      return this.model.attributes;
     };
 
     return ActionView;
@@ -311,17 +325,13 @@ window.require.register("views/home_view", function(exports, require, module) {
       if (this.backgroundPage.localStorage.getItem("accessToken")) {
         console.log("We have access to facebook");
         this.$('#action-sub-view').css('display', 'block');
-        return this.$('#action-sub-view').append(new ActionView(new ActionModel()).el);
+        return this.$('#action-sub-view').append(new ActionView({
+          model: new ActionModel()
+        }).el);
       } else {
         console.log("we need to connect to facebook");
         return this.$('#facebook-connect').css('display', 'block');
       }
-    };
-
-    HomeView.prototype.updateData = function(user) {
-      console.log(user.name);
-      this.$('body').append("Welcome " + (user != null ? user.name : void 0));
-      return this.render();
     };
 
     return HomeView;
@@ -335,7 +345,7 @@ window.require.register("views/templates/action_template", function(exports, req
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('# this is from the action subview :)');
+  buf.push('# this is from the action subview :)<div id="loading"><p>Loading...</p></div><p>welcome ' + escape((interp = name) == null ? '' : interp) + '</p>');
   }
   return buf.join("");
   };

@@ -11,20 +11,11 @@ module.exports = class HomeView extends View
     @backgroundPage = chrome.extension.getBackgroundPage()
     if @backgroundPage.localStorage.getItem("accessToken")
       console.log "We have access to facebook"
+      # show action sub view area
       @$('#action-sub-view').css('display', 'block')
-      @$('#action-sub-view').append new ActionView(new ActionModel()).el
+      # render action sub view into home view
+      @$('#action-sub-view').append new ActionView({model:(new ActionModel())}).el
 
     else
       console.log "we need to connect to facebook"
       @$('#facebook-connect').css('display', 'block')
-
-    # # get data from background page
-    # @user = @backgroundPage.data.user
-    # console.log "got user from background", @user
-    # @updateData(@user) unless not @user
-
-  updateData: (user) ->
-    console.log user.name
-    @$('body').append("Welcome "+user?.name)
-    @render()
-

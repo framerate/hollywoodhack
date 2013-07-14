@@ -2,4 +2,9 @@
 module.exports = class ActionModel extends Backbone.Model
 
   initialize: () ->
-    
+    @set "name", "hard coded name"
+    # get data from background page
+    @backgroundPage = chrome.extension.getBackgroundPage()
+    @user = @backgroundPage.data.user
+    console.log "got user from background", @user
+    setTimeout (=> @set "name", @user.name), 500

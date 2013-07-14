@@ -4,9 +4,11 @@
 # - rate buttons
 
 View = require './view'
-template = require './templates/action'
+template = require './templates/action_template'
 
 module.exports = class ActionView extends View
   id: 'action-view'
   template: template
-  initialize: (@options) ->
+  initialize: (@options = {}) ->
+    console.log 'action sub view loaded', @options
+    @render()

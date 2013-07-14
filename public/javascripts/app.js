@@ -142,23 +142,21 @@ window.require.register("lib/view_helper", function(exports, require, module) {
   
 });
 window.require.register("models/action_model", function(exports, require, module) {
-  var HomeModel,
+  var ActionModel,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  module.exports = HomeModel = (function(_super) {
+  module.exports = ActionModel = (function(_super) {
 
-    __extends(HomeModel, _super);
+    __extends(ActionModel, _super);
 
-    function HomeModel() {
-      return HomeModel.__super__.constructor.apply(this, arguments);
+    function ActionModel() {
+      return ActionModel.__super__.constructor.apply(this, arguments);
     }
 
-    HomeModel.prototype.initialize = function(data) {
-      this.data = data;
-    };
+    ActionModel.prototype.initialize = function() {};
 
-    return HomeModel;
+    return ActionModel;
 
   })(Backbone.Model);
   
@@ -258,7 +256,7 @@ window.require.register("views/action_view", function(exports, require, module) 
 
   View = require('./view');
 
-  template = require('./templates/action');
+  template = require('./templates/action_template');
 
   module.exports = ActionView = (function(_super) {
 
@@ -273,7 +271,9 @@ window.require.register("views/action_view", function(exports, require, module) 
     ActionView.prototype.template = template;
 
     ActionView.prototype.initialize = function(options) {
-      this.options = options;
+      this.options = options != null ? options : {};
+      console.log('action sub view loaded', this.options);
+      return this.render();
     };
 
     return ActionView;
@@ -282,11 +282,15 @@ window.require.register("views/action_view", function(exports, require, module) 
   
 });
 window.require.register("views/home_view", function(exports, require, module) {
-  var HomeView, View, template,
+  var ActionModel, ActionView, HomeView, View, template,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   View = require('./view');
+
+  ActionView = require('./action_view');
+
+  ActionModel = require('../models/action_model');
 
   template = require('./templates/home');
 
@@ -306,7 +310,8 @@ window.require.register("views/home_view", function(exports, require, module) {
       this.backgroundPage = chrome.extension.getBackgroundPage();
       if (this.backgroundPage.localStorage.getItem("accessToken")) {
         console.log("We have access to facebook");
-        return this.$('#action-sub-view').css('display', 'block');
+        this.$('#action-sub-view').css('display', 'block');
+        return this.$('#action-sub-view').append(new ActionView(new ActionModel()).el);
       } else {
         console.log("we need to connect to facebook");
         return this.$('#facebook-connect').css('display', 'block');
@@ -324,13 +329,24 @@ window.require.register("views/home_view", function(exports, require, module) {
   })(View);
   
 });
+window.require.register("views/templates/action_template", function(exports, require, module) {
+  module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+  attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+  var buf = [];
+  with (locals || {}) {
+  var interp;
+  buf.push('# this is from the action subview :)');
+  }
+  return buf.join("");
+  };
+});
 window.require.register("views/templates/home", function(exports, require, module) {
   module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
   attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<h1>Home View persistant header</h1><div id="facebook-connect"><h3>You must connect to Facebook to use Trailer Rater<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Connect to Facebook</a></p></h3></div><div id="action-sub-view"><p>actino sub view would go here...</p></div>');
+  buf.push('<h1>Home View persistant header</h1><div id="facebook-connect"><h3>You must connect to Facebook to use Trailer Rater<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Connect to Facebook</a></p></h3></div><div id="action-sub-view"></div>');
   }
   return buf.join("");
   };

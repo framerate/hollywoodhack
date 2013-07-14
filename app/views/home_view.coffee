@@ -1,4 +1,6 @@
 View = require './view'
+ActionView = require './action_view'
+ActionModel = require '../models/action_model'
 template = require './templates/home'
 
 module.exports = class HomeView extends View
@@ -10,6 +12,8 @@ module.exports = class HomeView extends View
     if @backgroundPage.localStorage.getItem("accessToken")
       console.log "We have access to facebook"
       @$('#action-sub-view').css('display', 'block')
+      @$('#action-sub-view').append new ActionView(new ActionModel()).el
+
     else
       console.log "we need to connect to facebook"
       @$('#facebook-connect').css('display', 'block')

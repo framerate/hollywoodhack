@@ -253,8 +253,19 @@ window.require.register("views/home_view", function(exports, require, module) {
     HomeView.prototype.template = template;
 
     HomeView.prototype.initialize = function() {
-      this.backgroundPage = chrome.extension.getBackgroundPage();
-      return this.updateData();
+      return chrome.tabs.getSelected(null, function(tab) {
+        var port;
+        port = chrome.tabs.connect(tab.id);
+        port.postMessage({
+          "hello": "world"
+        });
+        port.onMessage.addListener(function(response) {
+          console.error(JSON.stringify(response));
+          return jQuery('#home-view').html("<img src='" + response.poster + "' />");
+        });
+        this.backgroundPage = chrome.extension.getBackgroundPage();
+        return this.updateData();
+      });
     };
 
     HomeView.prototype.updateData = function() {

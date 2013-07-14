@@ -253,7 +253,7 @@ window.require.register("popup", function(exports, require, module) {
   
 });
 window.require.register("test", function(exports, require, module) {
-  var Users, getFriendsForMovie, me, saveUser, users, usersQuery;
+  var Users, getFriendsForMovie, saveUser, users, usersQuery;
 
   console.log(">>>>>>>>>>> doing parse");
 
@@ -269,11 +269,11 @@ window.require.register("test", function(exports, require, module) {
     if (!user.name) {
       return;
     }
-    usersQuery.equalTo('username', me);
+    usersQuery.equalTo('username', 'complete');
     return usersQuery.find({
       success: function(results) {
-        if (results.length) {
-          console.log("updating user", results);
+        if (results) {
+          console.log("updating user", results[0].get('username'), results);
           results[0].set('username', user.name);
           if (user.movieId) {
             results[0].set('movieId', user.movieId);
@@ -309,7 +309,7 @@ window.require.register("test", function(exports, require, module) {
         }
       },
       error: function(e) {
-        return console.log("error", e);
+        return console.log("XXXXXXXX", e);
       }
     });
   };
@@ -333,11 +333,9 @@ window.require.register("test", function(exports, require, module) {
     });
   };
 
-  me = "Jeff S";
-
   saveUser({
-    name: me,
-    movieId: 555,
+    name: 'complete',
+    movieId: 999,
     rating: false
   });
 

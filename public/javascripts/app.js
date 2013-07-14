@@ -253,24 +253,65 @@ window.require.register("popup", function(exports, require, module) {
   
 });
 window.require.register("test", function(exports, require, module) {
-  var TRObject, trObject;
+  var Users, getFriendsForMovie, saveUser, users, usersQuery;
+
+  console.log(">>>>>>>>>>> doing parse");
 
   Parse.initialize("BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh");
 
-  TRObject = Parse.Object.extend("TRObject");
+  Users = Parse.Object.extend("myusers");
 
-  trObject = new TRObject;
+  users = new Users();
 
-  trObject.set("FBID", "FAKEBLOCK");
+  usersQuery = new Parse.Query(Users);
 
-  trObject.save(null, {
-    success: function(object) {
-      return console.log("[Parse] : Sent test payload.");
-    },
-    error: function(object, error) {
-      return console.error("ERROR: " + error.description);
+  saveUser = function(user) {
+    if (!user.name) {
+      return;
     }
+    users.set('username', user.name);
+    if (user.movieId) {
+      users.set('movieId', user.movieId);
+    }
+    if (user.rating != null) {
+      users.set('rating', user.rating);
+    }
+    return users.save({
+      success: function(object) {
+        return console.log("[Parse] : Sent test payload.");
+      },
+      error: function(object, error) {
+        return console.error("ERROR: " + error.description);
+      }
+    });
+  };
+
+  getFriendsForMovie = function(movieId, myFriendsFbIds) {
+    if (movieId == null) {
+      movieId = 0;
+    }
+    if (myFriendsFbIds == null) {
+      myFriendsFbIds = [];
+    }
+    usersQuery.containedIn("username", myFriendsFbIds);
+    usersQuery.equalTo('movieId', movieId);
+    return usersQuery.find({
+      success: function(results) {
+        return console.log("results", results);
+      },
+      error: function(e) {
+        return console.log("error", e);
+      }
+    });
+  };
+
+  saveUser({
+    name: 'complete',
+    movieId: 222,
+    rating: false
   });
+
+  getFriendsForMovie(111, ['aaa']);
   
 });
 window.require.register("views/action_view", function(exports, require, module) {

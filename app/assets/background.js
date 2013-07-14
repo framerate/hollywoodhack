@@ -11,7 +11,6 @@ function onFacebookLogin() {
                     console.log(access);
                     localStorage.accessToken = access;
                     chrome.tabs.onUpdated.removeListener(onFacebookLogin);
-                    // queryFacebook();
                     return;
                 }
             }
@@ -20,6 +19,27 @@ function onFacebookLogin() {
     }
 }
 chrome.tabs.onUpdated.addListener(onFacebookLogin);
+
+
+// request for data, fires off api calls
+function getData () {
+    queryFacebook();
+    getMovieData();
+}
+
+// wait until you have all the pieces of data (user, movie, friends) before sneding back
+function sendData () {
+    if(data.user && data.movie) {
+        console.log ("Data ready", data);
+        dataReady = document.createEvent('CustomEvent');
+        dataReady.initCustomEvent('dataReady', true, true, data);
+        window.dispatchEvent(dataReady);
+        data = {};
+    } else {
+        console.log ("Data not quite ready", data);
+    }
+}
+
 
 function queryFacebook () {
     if (localStorage.accessToken) {
@@ -36,27 +56,6 @@ function queryFacebook () {
     }
 }
 
-// queryFacebook();
-
-function getData () {
-    queryFacebook();
-    setTimeout(function(){data.test=true; sendData();},1000);
-    // queryRottenTomatoes();
-}
-
-function sendData () {
-    if(data.user && data.test) {
-        console.log ("Data ready", data);
-        dataReady = document.createEvent('CustomEvent');
-        dataReady.initCustomEvent('dataReady', true, true, data);
-        window.dispatchEvent(dataReady);
-        data = {};
-    } else {
-        console.log ("Data not quite ready", data);
-    }
-}
-
-
 function FacebookDataReady(user) {
     console.log("Got data from facebook", user);
     data.user=user;
@@ -64,15 +63,15 @@ function FacebookDataReady(user) {
  }
 
 
- function getPoster () {
+ function getMovieData () {
     // get poster from contentscript
     // TODO - change to receive just movie name, and make rotten tomatoes call here
     chrome.tabs.getSelected (null, function (tab) {
         var port = chrome.tabs.connect(tab.id);
         port.postMessage({"hello": "world"});
         port.onMessage.addListener(function (response) {
-            console.error(JSON.stringify(response));
-            jQuery('#home-view').html("<img src='"+response.poster+"' />");
+            data.movie = response;
+            sendData();
         });
     });
 

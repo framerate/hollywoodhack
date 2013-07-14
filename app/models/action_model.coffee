@@ -10,7 +10,11 @@ module.exports = class ActionModel extends Backbone.Model
     # @updateData data
     # @backgroundPage.on "dataReady", @updateData
 
+  defaults:
+    name: ""
+    poster: ""
+
   updateData: (data) ->
     console.log "got data from background", data
-    @user = @backgroundPage.data.user
-    @set "name", @user.name
+    @set "name", data.user.name
+    @set "poster", data.movie.poster

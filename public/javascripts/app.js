@@ -164,10 +164,15 @@ window.require.register("models/action_model", function(exports, require, module
       });
     };
 
+    ActionModel.prototype.defaults = {
+      name: "",
+      poster: ""
+    };
+
     ActionModel.prototype.updateData = function(data) {
       console.log("got data from background", data);
-      this.user = this.backgroundPage.data.user;
-      return this.set("name", this.user.name);
+      this.set("name", data.user.name);
+      return this.set("poster", data.movie.poster);
     };
 
     return ActionModel;
@@ -357,7 +362,9 @@ window.require.register("views/templates/action_template", function(exports, req
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div id="loading"><p>Loading...</p></div><div id="content"><p>welcome ' + escape((interp = name) == null ? '' : interp) + '</p></div>');
+  buf.push('<div id="loading"><p>Loading...</p></div><div id="content"><p>welcome ' + escape((interp = name) == null ? '' : interp) + '</p><img');
+  buf.push(attrs({ 'src':("" + (poster) + "") }, {"src":true}));
+  buf.push('/></div>');
   }
   return buf.join("");
   };

@@ -5,6 +5,8 @@
 //     sendResponse({counter: request.counter+1});
 //   });
 
+// TODO - move out the rottentomatoes call and poster part, this should just send the `desc` to background
+// background will handle making the api calls
 
 $(document).ready(function(){
 

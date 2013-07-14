@@ -141,6 +141,28 @@ window.require.register("lib/view_helper", function(exports, require, module) {
 
   
 });
+window.require.register("models/action_model", function(exports, require, module) {
+  var HomeModel,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  module.exports = HomeModel = (function(_super) {
+
+    __extends(HomeModel, _super);
+
+    function HomeModel() {
+      return HomeModel.__super__.constructor.apply(this, arguments);
+    }
+
+    HomeModel.prototype.initialize = function(data) {
+      this.data = data;
+    };
+
+    return HomeModel;
+
+  })(Backbone.Model);
+  
+});
 window.require.register("models/collection", function(exports, require, module) {
   var Collection,
     __hasProp = {}.hasOwnProperty,
@@ -229,6 +251,36 @@ window.require.register("test", function(exports, require, module) {
   });
   
 });
+window.require.register("views/action_view", function(exports, require, module) {
+  var ActionView, View, template,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  View = require('./view');
+
+  template = require('./templates/action');
+
+  module.exports = ActionView = (function(_super) {
+
+    __extends(ActionView, _super);
+
+    function ActionView() {
+      return ActionView.__super__.constructor.apply(this, arguments);
+    }
+
+    ActionView.prototype.id = 'action-view';
+
+    ActionView.prototype.template = template;
+
+    ActionView.prototype.initialize = function(options) {
+      this.options = options;
+    };
+
+    return ActionView;
+
+  })(View);
+  
+});
 window.require.register("views/home_view", function(exports, require, module) {
   var HomeView, View, template,
     __hasProp = {}.hasOwnProperty,
@@ -250,23 +302,14 @@ window.require.register("views/home_view", function(exports, require, module) {
 
     HomeView.prototype.template = template;
 
-    HomeView.prototype.initialize = function() {
-      chrome.tabs.getSelected(null, function(tab) {
-        var port;
-        port = chrome.tabs.connect(tab.id);
-        port.postMessage({
-          "hello": "world"
-        });
-        return port.onMessage.addListener(function(response) {
-          console.error(JSON.stringify(response));
-          return jQuery('#home-view').html("<img src='" + response.poster + "' />");
-        });
-      });
+    HomeView.prototype.afterRender = function() {
       this.backgroundPage = chrome.extension.getBackgroundPage();
-      this.user = this.backgroundPage.data.user;
-      console.log("got user from background", this.user);
-      if (!!this.user) {
-        return this.updateData(this.user);
+      if (this.backgroundPage.localStorage.getItem("accessToken")) {
+        console.log("We have access to facebook");
+        return this.$('#action-sub-view').css('display', 'block');
+      } else {
+        console.log("we need to connect to facebook");
+        return this.$('#facebook-connect').css('display', 'block');
       }
     };
 
@@ -287,7 +330,7 @@ window.require.register("views/templates/home", function(exports, require, modul
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<H1>HELLO WORLD</H1><h1>Facebook Connect For Chrome Extension Test<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Facebook Connect</a></p></h1>');
+  buf.push('<h1>Home View persistant header</h1><div id="facebook-connect"><h3>You must connect to Facebook to use Trailer Rater<p><a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=160913750763734&amp;response_type=token&amp;scope=email&amp;redirect_uri=http://www.facebook.com/connect/login_success.html">Connect to Facebook</a></p></h3></div><div id="action-sub-view"><p>actino sub view would go here...</p></div>');
   }
   return buf.join("");
   };

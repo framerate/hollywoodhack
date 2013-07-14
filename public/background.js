@@ -43,3 +43,18 @@ function FacebookDataReady(user) {
     console.log("Got data from facebook", user);
     data.user=user;
  }
+
+
+ function getPoster () {
+    // get poster from contentscript
+    // TODO - change to receive just movie name, and make rotten tomatoes call here
+    chrome.tabs.getSelected (null, function (tab) {
+        var port = chrome.tabs.connect(tab.id);
+        port.postMessage({"hello": "world"});
+        port.onMessage.addListener(function (response) {
+            console.error(JSON.stringify(response));
+            jQuery('#home-view').html("<img src='"+response.poster+"' />");
+        });
+    });
+
+ }

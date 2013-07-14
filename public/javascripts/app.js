@@ -224,7 +224,7 @@ window.require.register("test", function(exports, require, module) {
     foo: "bar"
   }, {
     success: function(object) {
-      return console.log("yay it worked");
+      return console.log("[Parse] : Sent test payload.");
     }
   });
   

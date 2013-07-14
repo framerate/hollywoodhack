@@ -10,7 +10,7 @@ $(document).ready(function(){
 
 	chrome.runtime.onConnect.addListener(function(port) {
 	  port.onMessage.addListener(function(msg) {
-	  	var desc = $('meta[name=omni_page').attr('content');
+	  	var desc = $('meta[name=omni_page]').attr('content');
 	  	desc = desc.split(' - ')[1];
 	  	urlDesc = encodeURI(desc);
 	  	$.getJSON('http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=snxd2wjz2z9n9vvrhpyv6mgn&q='+desc, function(data) {

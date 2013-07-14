@@ -3,4 +3,4 @@ TestObject = Parse.Object.extend "TestObject"
 testObject = new TestObject
 testObject.save foo: "bar",
   success: (object) ->
-  	console.log "yay it worked"
+  	console.log "[Parse] : Sent test payload."

@@ -4,6 +4,8 @@ Application =
     HomeView = require 'views/home_view'
     Router = require 'lib/router'
 
+    require 'test'
+
     # Ideally, initialized classes should be kept in controllers & mediator.
     # If you're making big webapp, here's more sophisticated skeleton
     # https://github.com/paulmillr/brunch-with-chaplin

@@ -87,6 +87,7 @@ window.require.register("application", function(exports, require, module) {
       var HomeView, Router;
       HomeView = require('views/home_view');
       Router = require('lib/router');
+      require('test');
       this.homeView = new HomeView();
       this.router = new Router();
       return typeof Object.freeze === "function" ? Object.freeze(this) : void 0;
@@ -208,6 +209,24 @@ window.require.register("popup", function(exports, require, module) {
     return Popup;
 
   })(View);
+  
+});
+window.require.register("test", function(exports, require, module) {
+  var TestObject, testObject;
+
+  Parse.initialize("BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh");
+
+  TestObject = Parse.Object.extend("TestObject");
+
+  testObject = new TestObject;
+
+  testObject.save({
+    foo: "bar"
+  }, {
+    success: function(object) {
+      return console.log("yay it worked");
+    }
+  });
   
 });
 window.require.register("views/home_view", function(exports, require, module) {

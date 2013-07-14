@@ -4,18 +4,18 @@ template = require './templates/home'
 module.exports = class HomeView extends View
   id: 'home-view'
   template: template
-
-  initialize: =>
+  initialize: ->
     # get poster from rotten tomatoes (called on dom)
-  	chrome.tabs.getSelected null, (tab) ->
-  		port = chrome.tabs.connect tab.id
-  		port.postMessage {"hello": "world"}
-  		port.onMessage.addListener (response) ->
-  			console.error JSON.stringify(response)
-  			jQuery('#home-view').html("<img src='"+response.poster+"' />")
+    chrome.tabs.getSelected null, (tab) ->
+      port = chrome.tabs.connect tab.id
+      port.postMessage {"hello": "world"}
+      port.onMessage.addListener (response) ->
+        console.error JSON.stringify(response)
+        jQuery('#home-view').html("<img src='"+response.poster+"' />")
 
 
     @backgroundPage = chrome.extension.getBackgroundPage()
+    console.log @
     # listen to backgroundpage event to call updateData
     # for now...
     @updateData()

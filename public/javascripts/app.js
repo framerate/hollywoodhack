@@ -231,7 +231,6 @@ window.require.register("test", function(exports, require, module) {
 });
 window.require.register("views/home_view", function(exports, require, module) {
   var HomeView, View, template,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -244,7 +243,6 @@ window.require.register("views/home_view", function(exports, require, module) {
     __extends(HomeView, _super);
 
     function HomeView() {
-      this.initialize = __bind(this.initialize, this);
       return HomeView.__super__.constructor.apply(this, arguments);
     }
 
@@ -253,19 +251,20 @@ window.require.register("views/home_view", function(exports, require, module) {
     HomeView.prototype.template = template;
 
     HomeView.prototype.initialize = function() {
-      return chrome.tabs.getSelected(null, function(tab) {
+      chrome.tabs.getSelected(null, function(tab) {
         var port;
         port = chrome.tabs.connect(tab.id);
         port.postMessage({
           "hello": "world"
         });
-        port.onMessage.addListener(function(response) {
+        return port.onMessage.addListener(function(response) {
           console.error(JSON.stringify(response));
           return jQuery('#home-view').html("<img src='" + response.poster + "' />");
         });
-        this.backgroundPage = chrome.extension.getBackgroundPage();
-        return this.updateData();
       });
+      this.backgroundPage = chrome.extension.getBackgroundPage();
+      console.log(this);
+      return this.updateData();
     };
 
     HomeView.prototype.updateData = function() {

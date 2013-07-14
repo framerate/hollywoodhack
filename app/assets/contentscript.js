@@ -18,9 +18,6 @@ $(document).ready(function(){
         port.postMessage({"poster":  data.movies[0].posters.detailed});
         // $('body').prepend(poster);
       });
-
-
-      
     });
   });
   

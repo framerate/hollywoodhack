@@ -78,6 +78,9 @@ td { vertical-align: top; }
 #action-sub-view {
   display: none;
 }
+#action-sub-view #content {
+  display: none;
+}
 .ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; *line-height: 0; }
 .ir br { display: none; }
 .hidden { display: none !important; visibility: hidden; }

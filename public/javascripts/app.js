@@ -156,7 +156,6 @@ window.require.register("models/action_model", function(exports, require, module
 
     ActionModel.prototype.initialize = function() {
       var _this = this;
-      this.set("name", "hard coded name");
       this.backgroundPage = chrome.extension.getBackgroundPage();
       this.user = this.backgroundPage.data.user;
       console.log("got user from background", this.user);
@@ -290,6 +289,13 @@ window.require.register("views/action_view", function(exports, require, module) 
       return this.model.attributes;
     };
 
+    ActionView.prototype.afterRender = function() {
+      if (this.model.get('name')) {
+        this.$('#loading').hide();
+        return this.$('#content').show();
+      }
+    };
+
     return ActionView;
 
   })(View);
@@ -345,7 +351,7 @@ window.require.register("views/templates/action_template", function(exports, req
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('# this is from the action subview :)<div id="loading"><p>Loading...</p></div><p>welcome ' + escape((interp = name) == null ? '' : interp) + '</p>');
+  buf.push('<div id="loading"><p>Loading...</p></div><div id="content"><p>welcome ' + escape((interp = name) == null ? '' : interp) + '</p></div>');
   }
   return buf.join("");
   };
@@ -383,6 +389,7 @@ window.require.register("views/view", function(exports, require, module) {
     View.prototype.getRenderData = function() {};
 
     View.prototype.render = function() {
+      console.debug("Rendering " + this.constructor.name);
       this.$el.html(this.template(this.getRenderData()));
       this.afterRender();
       return this;

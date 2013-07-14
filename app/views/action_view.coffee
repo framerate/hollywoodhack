@@ -18,3 +18,8 @@ module.exports = class ActionView extends View
 
   getRenderData: ->
     @model.attributes
+
+  afterRender: ->
+    if @model.get 'name'
+      @$('#loading').hide()
+      @$('#content').show()

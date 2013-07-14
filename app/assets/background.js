@@ -8,7 +8,7 @@ function onFacebookLogin() {
                 if (tabs[i].url.indexOf(successURL) == 0) {
                     var params = tabs[i].url.split('#')[1];
                     access = params.split('&')[0]
-                    console.log(access);
+                    console.log('[Background] : ' + access);
                     localStorage.accessToken = access;
                     chrome.tabs.onUpdated.removeListener(onFacebookLogin);
                     return;
@@ -24,40 +24,63 @@ chrome.tabs.onUpdated.addListener(onFacebookLogin);
 // request for data, fires off api calls
 function getData () {
     queryFacebook();
+    queryFacebookFriends();
     getMovieData();
 }
 
 // wait until you have all the pieces of data (user, movie, friends) before sneding back
 function sendData () {
-    if(data.user && data.movie) {
-        console.log ("Data ready", data);
+    if(data.user && data.movie && data.friends) {
+        console.log ("[Background] : Data ready", data);
         dataReady = document.createEvent('CustomEvent');
         dataReady.initCustomEvent('dataReady', true, true, data);
         window.dispatchEvent(dataReady);
         data = {};
     } else {
-        console.log ("Data not quite ready", data);
+        console.log ("[Background] : Data not quite ready", data);
     }
 }
 
 
-function queryFacebook () {
+function queryFacebookFriends () {
+
     if (localStorage.accessToken) {
-        console.log("fb api query...")
-        var graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=FacebookDataReady";
-        console.log("querying:",graphUrl);
+        console.log("[Background] : fb api query...")
+        var graphUrl = "https://graph.facebook.com/me/friends?" + localStorage.accessToken + "&callback=FacebookFriendDataReady";
+        console.log("[Background] : querying friends:",graphUrl);
 
         var script = document.createElement("script");
         script.src = graphUrl;
         document.head.appendChild(script);
 
     } else {
-        console.log("no accessToken yet...");
+        console.log("[Background] : no accessToken yet...");
+    }
+}
+
+function FacebookFriendDataReady(friends) {
+    console.log("[Background] : Got friend data from facebook", friends);
+    data.friends=friends
+    sendData();
+ }
+
+ function queryFacebook () {
+    if (localStorage.accessToken) {
+        console.log("[Background] : fb api query...")
+        var graphUrl = "https://graph.facebook.com/me?" + localStorage.accessToken + "&callback=FacebookDataReady";
+        console.log("[Background] : querying:",graphUrl);
+
+        var script = document.createElement("script");
+        script.src = graphUrl;
+        document.head.appendChild(script);
+
+    } else {
+        console.log("[Background] : no accessToken yet...");
     }
 }
 
 function FacebookDataReady(user) {
-    console.log("Got data from facebook", user);
+    console.log("[Background] : Got data from facebook", user);
     data.user=user;
     sendData();
  }

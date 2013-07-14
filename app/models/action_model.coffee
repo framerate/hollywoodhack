@@ -20,3 +20,5 @@ module.exports = class ActionModel extends Backbone.Model
     @set "name", data.user.name
     @set "poster", data.movie.poster
     @set "fbid", data.user.id # test this
+    @set "friends", data.friends
+    console.log "friends: " + data.friends

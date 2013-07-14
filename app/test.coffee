@@ -8,17 +8,38 @@ Users = Parse.Object.extend "myusers"
 users = new Users();
 usersQuery = new Parse.Query(Users);
 
+
 saveUser = (user) ->
   return if not user.name
-  users.set 'username', user.name
-  users.set 'movieId', user.movieId if user.movieId
-  users.set 'rating', user.rating if user.rating?
-  users.save 
-    success: (object) ->
-      console.log "[Parse] : Sent test payload."
-    
-    ,error: (object, error) ->
-      console.error "ERROR: " + error.description
+  # update if already exists
+  usersQuery.equalTo 'username', 'complete'
+  usersQuery.find
+    success: (results) ->
+      if results
+        console.log "updating user", results[0].get('username'), results
+        results[0].set 'username', user.name
+        results[0].set 'movieId', user.movieId if user.movieId
+        results[0].set 'rating', user.rating if user.rating?
+        results[0].save 
+          success: (object) ->
+            console.log "[Parse] : Sent test payload."
+          
+          ,error: (object, error) ->
+            console.error "ERROR: " + error.description
+      else
+        console.log "saving new user"
+        users.set 'username', user.name
+        users.set 'movieId', user.movieId if user.movieId
+        users.set 'rating', user.rating if user.rating?
+        users.save 
+          success: (object) ->
+            console.log "[Parse] : Sent test payload."
+          
+          ,error: (object, error) ->
+            console.error "ERROR: " + error.description
+        
+    error: (e) -> console.log "XXXXXXXX", e
+
 
 
 
@@ -30,7 +51,6 @@ getFriendsForMovie = (movieId = 0, myFriendsFbIds = []) ->
     success: (results) -> console.log "results",results
     error: (e) -> console.log "error",e
 
-# saveUser {name: 'aaa'}
-saveUser {name: 'complete', movieId: 222, rating: false}
+saveUser {name: 'complete', movieId: 999, rating: false}
 
 getFriendsForMovie 111, ['aaa']

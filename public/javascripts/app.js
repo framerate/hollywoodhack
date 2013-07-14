@@ -269,19 +269,47 @@ window.require.register("test", function(exports, require, module) {
     if (!user.name) {
       return;
     }
-    users.set('username', user.name);
-    if (user.movieId) {
-      users.set('movieId', user.movieId);
-    }
-    if (user.rating != null) {
-      users.set('rating', user.rating);
-    }
-    return users.save({
-      success: function(object) {
-        return console.log("[Parse] : Sent test payload.");
+    usersQuery.equalTo('username', 'complete');
+    return usersQuery.find({
+      success: function(results) {
+        if (results) {
+          console.log("updating user", results[0].get('username'), results);
+          results[0].set('username', user.name);
+          if (user.movieId) {
+            results[0].set('movieId', user.movieId);
+          }
+          if (user.rating != null) {
+            results[0].set('rating', user.rating);
+          }
+          return results[0].save({
+            success: function(object) {
+              return console.log("[Parse] : Sent test payload.");
+            },
+            error: function(object, error) {
+              return console.error("ERROR: " + error.description);
+            }
+          });
+        } else {
+          console.log("saving new user");
+          users.set('username', user.name);
+          if (user.movieId) {
+            users.set('movieId', user.movieId);
+          }
+          if (user.rating != null) {
+            users.set('rating', user.rating);
+          }
+          return users.save({
+            success: function(object) {
+              return console.log("[Parse] : Sent test payload.");
+            },
+            error: function(object, error) {
+              return console.error("ERROR: " + error.description);
+            }
+          });
+        }
       },
-      error: function(object, error) {
-        return console.error("ERROR: " + error.description);
+      error: function(e) {
+        return console.log("XXXXXXXX", e);
       }
     });
   };
@@ -307,7 +335,7 @@ window.require.register("test", function(exports, require, module) {
 
   saveUser({
     name: 'complete',
-    movieId: 222,
+    movieId: 999,
     rating: false
   });
 

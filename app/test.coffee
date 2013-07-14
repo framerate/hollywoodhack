@@ -1,4 +1,3 @@
-console.log ">>>>>>>>>>> doing parse"
 Parse.initialize "BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh"
 
 
@@ -6,19 +5,19 @@ Parse.initialize "BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt
 
 Users = Parse.Object.extend "myusers"
 users = new Users();
-usersQuery = new Parse.Query(Users);
 
 
 saveUser = (user) ->
   return if not user.name
   # update if already exists
+  usersQuery = new Parse.Query(Users);
   usersQuery.equalTo 'username', me
   usersQuery.find
     success: (results) ->
       if results.length
         console.log "updating user", results
         results[0].set 'username', user.name
-        results[0].set 'movieId', user.movieId if user.movieId
+        results[0].addUnique 'movieId', user.movieId if user.movieId
         results[0].set 'rating', user.rating if user.rating?
         results[0].save 
           success: (object) ->
@@ -29,7 +28,7 @@ saveUser = (user) ->
       else
         console.log "saving new user"
         users.set 'username', user.name
-        users.set 'movieId', user.movieId if user.movieId
+        users.add 'movieId', user.movieId if user.movieId
         users.set 'rating', user.rating if user.rating?
         users.save 
           success: (object) ->
@@ -45,14 +44,15 @@ saveUser = (user) ->
 
 
 getFriendsForMovie = (movieId = 0, myFriendsFbIds = []) ->
+  usersQuery = new Parse.Query(Users);
   usersQuery.containedIn "username", myFriendsFbIds
   usersQuery.equalTo('movieId', movieId)
   usersQuery.find
-    success: (results) -> console.log "results",results
+    success: (results) -> console.log "friends of mine for movie", movieId,results
     error: (e) -> console.log "error",e
 
 me = "Jeff S"
 
-saveUser {name: me, movieId: 555, rating: false}
+saveUser {name: me, movieId: 666, rating: false}
 
-getFriendsForMovie 111, ['aaa']
+getFriendsForMovie 777, ['jeff','Jeff S']

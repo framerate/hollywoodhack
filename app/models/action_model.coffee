@@ -16,6 +16,7 @@ module.exports = class ActionModel extends Backbone.Model
     fbid: ""
     friends: ""
     movieId: ""
+    friendsWhoLike: []
 
   updateData: (data) ->
     console.log "got data from background", data
@@ -25,3 +26,4 @@ module.exports = class ActionModel extends Backbone.Model
     @set "friends", data.friends.data
     console.log "[action_model] : friends: " + data.friends.data
     @set "movieId", data.movie.movieId
+    @set "friendsWhoLike", data.friendsWhoLike

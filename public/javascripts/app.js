@@ -168,7 +168,8 @@ window.require.register("models/action_model", function(exports, require, module
       poster: "",
       fbid: "",
       friends: "",
-      movieId: ""
+      movieId: "",
+      friendsWhoLike: []
     };
 
     ActionModel.prototype.updateData = function(data) {
@@ -178,7 +179,8 @@ window.require.register("models/action_model", function(exports, require, module
       this.set("fbid", data.user.id);
       this.set("friends", data.friends.data);
       console.log("[action_model] : friends: " + data.friends.data);
-      return this.set("movieId", data.movie.movieId);
+      this.set("movieId", data.movie.movieId);
+      return this.set("friendsWhoLike", data.friendsWhoLike);
     };
 
     return ActionModel;
@@ -472,19 +474,19 @@ window.require.register("views/templates/action_template", function(exports, req
   buf.push('<div id="loading"><p>Loading...</p></div><div id="content"><p id="welcome">welcome ' + escape((interp = name) == null ? '' : interp) + '</p><div id="poster"><img');
   buf.push(attrs({ 'src':("" + (poster) + "") }, {"src":true}));
   buf.push('/></div><div id="buttons"><div id="thumbsUp">Thumbs Up</div><div id="thumbsDown">Thumbs Down</div></div><div id="friends">');
-  // iterate friends
+  // iterate friendsWhoLike
   ;(function(){
-    if ('number' == typeof friends.length) {
-      for (var $index = 0, $$l = friends.length; $index < $$l; $index++) {
-        var friend = friends[$index];
+    if ('number' == typeof friendsWhoLike.length) {
+      for (var $index = 0, $$l = friendsWhoLike.length; $index < $$l; $index++) {
+        var friend = friendsWhoLike[$index];
 
-  buf.push('<li>' + escape((interp = friend.name) == null ? '' : interp) + '</li>');
+  buf.push('<li>' + escape((interp = friend) == null ? '' : interp) + '</li>');
       }
     } else {
-      for (var $index in friends) {
-        var friend = friends[$index];
+      for (var $index in friendsWhoLike) {
+        var friend = friendsWhoLike[$index];
 
-  buf.push('<li>' + escape((interp = friend.name) == null ? '' : interp) + '</li>');
+  buf.push('<li>' + escape((interp = friend) == null ? '' : interp) + '</li>');
      }
     }
   }).call(this);

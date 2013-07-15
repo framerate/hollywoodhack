@@ -31,7 +31,7 @@ function getData () {
 
 // wait until you have all the pieces of data (user, movie, friends) before sneding back
 function sendData () {
-    if(data.user && data.movie && data.friends) {
+    if(data.user && data.movie && data.friends && data.friendsWhoLike) {
         console.log ("[Background] : Data ready", data);
         dataReady = document.createEvent('CustomEvent');
         dataReady.initCustomEvent('dataReady', true, true, data);
@@ -112,6 +112,13 @@ function getFriendsForMovie(movieId, myFriendsFbIds) {
     main.find({
         success: function(results) {
             console.log("friends of mine for movie " + movieId,results);
+            friendsWhoLike = [];
+            for (var i = 0; i < results.length; i++){
+                console.log(results[i], results[i].attributes.username)
+                friendsWhoLike.push(results[i].attributes.username);
+            }
+            data.friendsWhoLike = friendsWhoLike;
+            sendData();
         },
         error: function(e) {
             console.log("error " , e);

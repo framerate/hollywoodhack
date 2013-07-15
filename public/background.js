@@ -68,7 +68,8 @@ function FacebookFriendDataReady(friends) {
         console.log(friends.data[i].id);
         friendIdArray.push(friends.data[i].id);
     }
-    console.log('[Background] : friendIdArray is done!')
+    console.log('[Background] : friendIdArray is done!');
+    getFriendsForMovie(data.movie.movieId, friendIdArray);
     sendData();
  }
 
@@ -92,6 +93,27 @@ function FacebookDataReady(user) {
     data.user=user;
     sendData();
  }
+
+Parse.initialize("BstL12H3UWg80NUkm5zx4QnOM30KexqaQ3gPC7Ej", "wN5GgDLu9JpYtDXtLt4h5XQcdRKgH44RsrrhA6Vh");
+var Users = Parse.Object.extend("myusers");
+
+function getFriendsForMovie(movieId, myFriendsFbIds) {
+    var one = new Parse.Query(Users);
+    one.equalTo('movieIdYes', movieId);
+    two = new Parse.Query(Users);
+    two.equalTo('movieIdNo', movieId);
+    main = Parse.Query.or(one, two);
+    main.containedIn("username", myFriendsFbIds);
+    main.find({
+        success: function(results) {
+            console.log("friends of mine for movie" + movieId,results);
+        },
+        error: function(e) {
+            console.log("error " + e);
+        }
+    });
+
+}
 
 
  function getMovieData () {

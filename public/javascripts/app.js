@@ -278,13 +278,11 @@ window.require.register("test", function(exports, require, module) {
             console.log("updating user", results);
             results[0].set('username', user.name);
             results[0].set('fbid', user.fbid);
-            results[0].set('movieIdYes', null);
-            results[0].set('movieIdNo', null);
             if (user.movieIdYes) {
-              results[0].set('movieIdYes', user.movieIdYes);
+              results[0].addUnique('movieIdYes', user.movieIdYes);
             }
             if (user.movieIdNo) {
-              results[0].set('movieIdNo', user.movieIdNo);
+              results[0].addUnique('movieIdNo', user.movieIdNo);
             }
             return results[0].save({
               success: function(object) {
@@ -299,8 +297,8 @@ window.require.register("test", function(exports, require, module) {
             users = new Users();
             users.set('username', user.name);
             users.set('fbid', user.fbid || null);
-            users.set('movieIdYes', user.movieIdYes || null);
-            users.set('movieIdNo', user.movieIdNo || null);
+            users.add('movieIdYes', user.movieIdYes || null);
+            users.add('movieIdNo', user.movieIdNo || null);
             return users.save({
               success: function(object) {
                 return console.log("[Parse] : Sent test payload.");

@@ -16,10 +16,10 @@ module.exports =
           console.log "updating user", results
           results[0].set 'username', user.name
           results[0].set 'fbid', user.fbid
-          results[0].set 'movieIdYes', null
-          results[0].set 'movieIdNo', null
-          results[0].set 'movieIdYes', user.movieIdYes if user.movieIdYes
-          results[0].set 'movieIdNo', user.movieIdNo if user.movieIdNo
+          # results[0].set 'movieIdYes', null
+          # results[0].set 'movieIdNo', null
+          results[0].addUnique 'movieIdYes', user.movieIdYes if user.movieIdYes
+          results[0].addUnique 'movieIdNo', user.movieIdNo if user.movieIdNo
           results[0].save 
             success: (object) ->
               console.log "[Parse] : Sent test payload."
@@ -31,8 +31,8 @@ module.exports =
           users = new Users();
           users.set 'username', user.name
           users.set 'fbid', user.fbid or null
-          users.set 'movieIdYes', user.movieIdYes or null
-          users.set 'movieIdNo', user.movieIdNo or null
+          users.add 'movieIdYes', user.movieIdYes or null
+          users.add 'movieIdNo', user.movieIdNo or null
           users.save 
             success: (object) ->
               console.log "[Parse] : Sent test payload."
